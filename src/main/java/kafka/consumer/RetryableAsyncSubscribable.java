@@ -8,17 +8,17 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
 
-final class AsyncRetryableSubscribable<KEY, VALUE>  extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable {
+final class RetryableAsyncSubscribable<KEY, VALUE>  extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable {
 
     private final MultipileRecordConsumer<KEY, VALUE> recordConsumer;
 
     private final LongAdder commitMark = new LongAdder();
     private final int retryCount;
 
-    public AsyncRetryableSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topics) {
+    public RetryableAsyncSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topics, int retryCount) {
         super(kafkaConsumer, topics);
         this.recordConsumer = recordConsumer;
-        this.retryCount = 2;
+        this.retryCount = retryCount;
         kafkaConsumer.subscribe(topics, new FlushOnRebalanceListener(this));
     }
 

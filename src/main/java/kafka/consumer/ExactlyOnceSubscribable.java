@@ -12,19 +12,19 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Set;
 
-final class AsyncExactlyOnceDeliverySubscribable<T, KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE>  {
+final class ExactlyOnceSubscribable<T, KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE>  {
 
     private final Storage<T> storage;
     private final SingleRecordConsumer<KEY, VALUE> singleRecordConsumer;
 
-    public AsyncExactlyOnceDeliverySubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer,
-                                                SingleRecordConsumer<KEY, VALUE> singleRecordConsuming,
-                                                Storage<T> storage,
-                                                Set<String> topics) {
+    public ExactlyOnceSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer,
+                                   SingleRecordConsumer<KEY, VALUE> singleRecordConsuming,
+                                   Storage<T> storage,
+                                   Set<String> topics) {
         super(kafkaConsumer, topics);
         this.singleRecordConsumer = singleRecordConsuming;
         this.storage = storage;
-        kafkaConsumer.subscribe(topics, new SaveOffsetOnRebalance(kafkaConsumer));
+        kafkaConsumer.subscribe(topics, new SaveOffsetOnRebalance());
     }
 
     @Override
@@ -48,12 +48,6 @@ final class AsyncExactlyOnceDeliverySubscribable<T, KEY, VALUE> extends Abstract
     }
 
     private class SaveOffsetOnRebalance implements ConsumerRebalanceListener {
-
-        KafkaConsumer<KEY, VALUE> kafkaConsumer;
-
-        public SaveOffsetOnRebalance(KafkaConsumer<KEY, VALUE> kafkaConsumer) {
-            this.kafkaConsumer = kafkaConsumer;
-        }
 
         @Override
         public void onPartitionsRevoked(Collection<TopicPartition> collection) {

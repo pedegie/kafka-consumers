@@ -7,11 +7,11 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Set;
 
-final class AsyncSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable {
+final class AtMostOnceSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable {
 
     private final MultipileRecordConsumer<KEY, VALUE> consumerRecords;
 
-    public AsyncSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> consumerRecords, Set<String> topics) {
+    public AtMostOnceSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> consumerRecords, Set<String> topics) {
         super(kafkaConsumer, topics);
         this.consumerRecords = consumerRecords;
         kafkaConsumer.subscribe(topics, new FlushOnRebalanceListener(this));
@@ -22,7 +22,7 @@ final class AsyncSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VAL
         while (true) {
             ConsumerRecords<KEY, VALUE> records = kafkaConsumer.poll(Duration.ofMillis(100));
             consumerRecords.consumeRecords(records);
-            kafkaConsumer.commitAsync((map, e) -> exceptionHandler.accept(e));
+            kafkaConsumer.commitAsync();
         }
     }
 
