@@ -5,9 +5,9 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.util.Set;
 
-final class AtLeastOnceSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable   {
+final class AtLeastOnceSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE>  {
 
-    private static final int RETRY_UP_TO = 100;
+    private static final int RETRY_UP_TO = 1024;
     private final RetryableAsyncSubscribable<KEY, VALUE> retryable;
 
     protected AtLeastOnceSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> consumer, Set<String> topicList) {

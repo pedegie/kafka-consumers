@@ -47,6 +47,11 @@ final class ExactlyOnceSubscribable<T, KEY, VALUE> extends AbstractKafkaConsumer
         }
     }
 
+    @Override
+    public void flush() {
+        storage.commitTransaction();
+    }
+
     private class SaveOffsetOnRebalance implements ConsumerRebalanceListener {
 
         @Override

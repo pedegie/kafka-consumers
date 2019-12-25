@@ -35,7 +35,7 @@ public class SubscribableFactory {
                                                                             SingleRecordConsumer<KEY, VALUE> consumer,
                                                                             Storage<T> storage) {
         KafkaConsumer<KEY, VALUE> kafkaConsumer = prepareConsumer(props.getProps());
-        return new ExactlyOnceSubscribable<>(kafkaConsumer, consumer, storage, props.getTopics());
+        return new FlushOnErrorDecorator<>(new ExactlyOnceSubscribable<>(kafkaConsumer, consumer, storage, props.getTopics()), kafkaConsumer);
 
     }
 

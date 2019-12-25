@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-final class AsyncBatchSubscribable<KEY, VALUE>  extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable {
+final class AsyncBatchSubscribable<KEY, VALUE>  extends AbstractKafkaConsumer<KEY, VALUE> {
 
     private static final int BATCH_SIZE = 1000;
     private final SingleRecordConsumer<KEY, VALUE> consumer;

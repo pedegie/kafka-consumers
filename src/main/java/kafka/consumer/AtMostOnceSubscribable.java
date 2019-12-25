@@ -7,7 +7,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Set;
 
-final class AtMostOnceSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE> implements Flushable {
+final class AtMostOnceSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE>  {
 
     private final MultipileRecordConsumer<KEY, VALUE> consumerRecords;
 

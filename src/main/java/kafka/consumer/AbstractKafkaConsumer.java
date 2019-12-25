@@ -6,7 +6,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.util.Set;
 import java.util.function.Consumer;
 
-abstract class AbstractKafkaConsumer<KEY, VALUE> implements Subscribable {
+abstract class AbstractKafkaConsumer<KEY, VALUE> implements Subscribable, Flushable {
 
     protected final Set<String> topicList;
     protected final java.util.function.Consumer<Exception> exceptionHandler;
