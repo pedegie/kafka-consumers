@@ -27,17 +27,17 @@ final class AsyncRetryableSubscribable<KEY, VALUE>  extends AbstractKafkaConsume
             ConsumerRecords<KEY, VALUE> records = kafkaConsumer.poll(Duration.ofMillis(100));
             recordConsumer.consumeRecords(records);
             long mark = commitMark.longValue();
-            kafkaConsumer.commitAsync((partitions, exc) -> retryOnError(exc, mark, kafkaConsumer));
+            kafkaConsumer.commitAsync((partitions, exc) -> retryOnError(exc, mark, kafkaConsumer, 1));
         }
     }
 
-    private void retryOnError(Exception exc, long mark, KafkaConsumer<KEY, VALUE> kafkaConsumer) {
+    private void retryOnError(Exception exc, long mark, KafkaConsumer<KEY, VALUE> kafkaConsumer, int retry) {
         if (exc == null) {
             commitMark.increment();
         } else {
             exceptionHandler.accept(exc);
-            if (newerCommitWasNotSentInMeanwhile(mark)) {
-                kafkaConsumer.commitAsync();
+            if (retry < retryCount && newerCommitWasNotSentInMeanwhile(mark)) {
+                kafkaConsumer.commitAsync((partitions, exception) -> retryOnError(exception, mark, kafkaConsumer, retry + 1));
             }
         }
     }
