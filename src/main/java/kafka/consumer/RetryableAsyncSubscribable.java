@@ -1,6 +1,6 @@
 package kafka.consumer;
 
-import kafka.consumer.published.MultipileRecordConsumer;
+import kafka.consumer.published.MultipleRecordConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.LongAdder;
 
 final class RetryableAsyncSubscribable<KEY, VALUE>  extends AbstractKafkaConsumer<KEY, VALUE>  {
 
-    private final MultipileRecordConsumer<KEY, VALUE> recordConsumer;
+    private final MultipleRecordConsumer<KEY, VALUE> recordConsumer;
 
     private final LongAdder commitMark = new LongAdder();
     private final int retryCount;
 
-    public RetryableAsyncSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topics, int retryCount) {
+    public RetryableAsyncSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipleRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topics, int retryCount) {
         super(kafkaConsumer, topics);
         this.recordConsumer = recordConsumer;
         this.retryCount = retryCount;

@@ -1,6 +1,6 @@
 package kafka.consumer;
 
-import kafka.consumer.published.MultipileRecordConsumer;
+import kafka.consumer.published.MultipleRecordConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
@@ -9,9 +9,9 @@ import java.util.Set;
 
 final class AtMostOnceSubscribable<KEY, VALUE> extends AbstractKafkaConsumer<KEY, VALUE>  {
 
-    private final MultipileRecordConsumer<KEY, VALUE> consumerRecords;
+    private final MultipleRecordConsumer<KEY, VALUE> consumerRecords;
 
-    public AtMostOnceSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> consumerRecords, Set<String> topics) {
+    public AtMostOnceSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipleRecordConsumer<KEY, VALUE> consumerRecords, Set<String> topics) {
         super(kafkaConsumer, topics);
         this.consumerRecords = consumerRecords;
         kafkaConsumer.subscribe(topics, new FlushOnRebalanceListener(this));

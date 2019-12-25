@@ -1,6 +1,6 @@
 package kafka.consumer;
 
-import kafka.consumer.published.MultipileRecordConsumer;
+import kafka.consumer.published.MultipleRecordConsumer;
 import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -10,9 +10,9 @@ import java.util.Set;
 
 final class BlockingSyncRetryableSubscribable<KEY, VALUE>  extends AbstractKafkaConsumer<KEY, VALUE> {
 
-    private final MultipileRecordConsumer<KEY, VALUE> recordConsumer;
+    private final MultipleRecordConsumer<KEY, VALUE> recordConsumer;
 
-    public BlockingSyncRetryableSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topic) {
+    public BlockingSyncRetryableSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipleRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topic) {
         super(kafkaConsumer, topic);
         this.recordConsumer = recordConsumer;
         kafkaConsumer.subscribe(topic, new FlushOnRebalanceListener(this));
