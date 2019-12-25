@@ -13,11 +13,12 @@ final class AsyncRetryableSubscribable<KEY, VALUE>  extends AbstractKafkaConsume
     private final MultipileRecordConsumer<KEY, VALUE> recordConsumer;
 
     private final LongAdder commitMark = new LongAdder();
-    int retryCount = 2;
+    private final int retryCount;
 
     public AsyncRetryableSubscribable(KafkaConsumer<KEY, VALUE> kafkaConsumer, MultipileRecordConsumer<KEY, VALUE> recordConsumer, Set<String> topics) {
         super(kafkaConsumer, topics);
         this.recordConsumer = recordConsumer;
+        this.retryCount = 2;
         kafkaConsumer.subscribe(topics, new FlushOnRebalanceListener(this));
     }
 
@@ -27,17 +28,17 @@ final class AsyncRetryableSubscribable<KEY, VALUE>  extends AbstractKafkaConsume
             ConsumerRecords<KEY, VALUE> records = kafkaConsumer.poll(Duration.ofMillis(100));
             recordConsumer.consumeRecords(records);
             long mark = commitMark.longValue();
-            kafkaConsumer.commitAsync((partitions, exc) -> retryOnError(exc, mark, kafkaConsumer, 1));
+            kafkaConsumer.commitAsync((partitions, exc) -> retryOnError(exc, mark, 1));
         }
     }
 
-    private void retryOnError(Exception exc, long mark, KafkaConsumer<KEY, VALUE> kafkaConsumer, int retry) {
+    private void retryOnError(Exception exc, long mark, int retry) {
         if (exc == null) {
             commitMark.increment();
         } else {
             exceptionHandler.accept(exc);
             if (retry < retryCount && newerCommitWasNotSentInMeanwhile(mark)) {
-                kafkaConsumer.commitAsync((partitions, exception) -> retryOnError(exception, mark, kafkaConsumer, retry + 1));
+                kafkaConsumer.commitAsync((partitions, exception) -> retryOnError(exception, mark, retry + 1));
             }
         }
     }
