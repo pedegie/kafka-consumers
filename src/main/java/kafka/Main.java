@@ -1,8 +1,7 @@
 package kafka;
 
-import kafka.consumer.ConsumerManager;
+import kafka.consumer.SubscribableFactory;
 import kafka.consumer.published.KafkaPropsAndTopics;
-import kafka.consumer.published.Subscribable;
 import kafka.consumer.published.SingleRecordConsumer;
 
 import java.util.Collections;
@@ -11,14 +10,12 @@ import java.util.Properties;
 public class Main {
 
     public static void main(String[] args) {
-        ConsumerManager consumerManager = new ConsumerManager();
         KafkaPropsAndTopics props = prepareProps();
 
         SingleRecordConsumer<String, String> consumer = record -> System.out.println(record.key());
 
-        Subscribable subscribable = consumerManager.consumeWithAsyncBatch(props, consumer);
-        subscribable.subscribe();
-
+        SubscribableFactory.consumeWithAsyncBatch(props, consumer)
+                .subscribe();
     }
 
     private static KafkaPropsAndTopics prepareProps() {

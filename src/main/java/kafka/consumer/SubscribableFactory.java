@@ -9,20 +9,23 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.util.Properties;
 
-public class ConsumerManager {
+public class SubscribableFactory {
 
-    public <KEY, VALUE> Subscribable consumeWithAsyncBatch(KafkaPropsAndTopics props, SingleRecordConsumer<KEY, VALUE> consumer) {
+    protected SubscribableFactory() {
+    }
+
+    public static <KEY, VALUE> Subscribable consumeWithAsyncBatch(KafkaPropsAndTopics props, SingleRecordConsumer<KEY, VALUE> consumer) {
         KafkaConsumer<KEY, VALUE> kafkaConsumer = prepareConsumer(props.getProps());
         return new FlushOnErrorDecorator<>(new AsyncBatchSubscribable<>(kafkaConsumer, consumer, props.getTopics()), kafkaConsumer);
     }
 
-    public <KEY, VALUE> Subscribable consumeWithAsync(KafkaPropsAndTopics props, MultipileRecordConsumer<KEY, VALUE> consumer) {
+    public static <KEY, VALUE> Subscribable consumeWithAsync(KafkaPropsAndTopics props, MultipileRecordConsumer<KEY, VALUE> consumer) {
         KafkaConsumer<KEY, VALUE> kafkaConsumer = prepareConsumer(props.getProps());
         return new FlushOnErrorDecorator<>(new AsyncSubscribable<>(kafkaConsumer, consumer, props.getTopics()), kafkaConsumer);
 
     }
 
-    public <T, KEY, VALUE> Subscribable consumeWithAsyncExactlyOnceDelivery(KafkaPropsAndTopics props,
+    public static <T, KEY, VALUE> Subscribable consumeWithAsyncExactlyOnceDelivery(KafkaPropsAndTopics props,
                                                                             SingleRecordConsumer<KEY, VALUE> consumer,
                                                                             Storage<T> storage) {
         KafkaConsumer<KEY, VALUE> kafkaConsumer = prepareConsumer(props.getProps());
@@ -30,20 +33,20 @@ public class ConsumerManager {
 
     }
 
-    public <KEY, VALUE> Subscribable consumeWithAsyncRetryable(KafkaPropsAndTopics props,
+    public static <KEY, VALUE> Subscribable consumeWithAsyncRetryable(KafkaPropsAndTopics props,
                                                                MultipileRecordConsumer<KEY, VALUE> consumer) {
         KafkaConsumer<KEY, VALUE> kafkaConsumer = prepareConsumer(props.getProps());
         return new FlushOnErrorDecorator<>(new AsyncRetryableSubscribable<>(kafkaConsumer, consumer, props.getTopics()), kafkaConsumer);
     }
 
-    public <KEY, VALUE> Subscribable consumeWithBlockingSyncRetryable(KafkaPropsAndTopics props,
+    public static <KEY, VALUE> Subscribable consumeWithBlockingSyncRetryable(KafkaPropsAndTopics props,
                                                                       MultipileRecordConsumer<KEY, VALUE> consumer) {
         KafkaConsumer<KEY, VALUE> kafkaConsumer = prepareConsumer(props.getProps());
         return new FlushOnErrorDecorator<>(new BlockingSyncRetryableSubscribable<>(kafkaConsumer, consumer, props.getTopics()), kafkaConsumer);
     }
 
 
-    private <KEY, VALUE> KafkaConsumer<KEY, VALUE> prepareConsumer(Properties kafkaProps) {
+    private static <KEY, VALUE> KafkaConsumer<KEY, VALUE> prepareConsumer(Properties kafkaProps) {
         return null;
     }
 
